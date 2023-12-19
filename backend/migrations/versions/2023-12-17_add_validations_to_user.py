@@ -1,8 +1,8 @@
-"""Store
+"""Add validations to User
 
-Revision ID: 4f44ad43de4e
-Revises: 1b8d8ae1d443
-Create Date: 2023-12-03 20:31:37.428224
+Revision ID: d0895b3b294b
+Revises: c0a6726f9326
+Create Date: 2023-12-17 20:31:00.370412
 
 """
 from typing import Sequence, Union
@@ -12,8 +12,8 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision: str = '4f44ad43de4e'
-down_revision: Union[str, None] = '1b8d8ae1d443'
+revision: str = 'd0895b3b294b'
+down_revision: Union[str, None] = 'c0a6726f9326'
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
 

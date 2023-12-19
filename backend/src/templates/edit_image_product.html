@@ -1,0 +1,130 @@
+{% extends "details.html" %}
+{% block content %}
+<div class="col-12">
+  <div class="card">
+    <div class="card-header">
+      <h3 class="card-title">Edit {{ model_view.name }} product_id</h3>
+    </div>
+    <div class="card-body border-bottom py-3">
+      <form id="productForm">
+        <input type="hidden" id="productId" name="id" value="{{ product_id }}">
+        <fieldset class="form-fieldset">
+          {% for field in form %}
+          <div class="mb-3 form-group row">
+            {{ field.label(class_="form-label col-sm-2 col-form-label") }}
+            <div class="col-sm-10">
+              {% if field.errors %}
+              {{ field(class_="form-control is-invalid", required=true) }}
+              {% else %}
+              {% if field.name == "image" %}
+              <input name="image" type="file" required>
+              {% else %}
+              {{ field(required=true) }}
+              {% endif %}
+              {% endif %}
+              {% for error in field.errors %}
+              <div class="invalid-feedback">{{ error }}</div>
+              {% endfor %}
+            </div>
+          </div>
+          {% endfor %}
+        </fieldset>
+        <div class="row">
+          {% if error %}
+          <div class="alert alert-danger" role="alert">{{ error }}</div>
+          {% endif %}
+          <div class="col-md-6">
+            <div class="col">
+              {% if error %}
+              <div class="alert alert-danger" role="alert">{{ error }}</div>
+              {% endif %}
+              <div id="serverError" class="alert alert-danger" role="alert" style="display: none;"></div>
+              <div id="serverSuccess" class="alert alert-success" role="alert" style="display: none;"></div>
+
+              <div class="col-md-2">
+                <a href="{{ url_for('admin:list', identity=model_view.identity) }}" class="btn">
+                  Cancel
+                </a>
+              </div>
+
+              <div class="btn-group flex-wrap" data-toggle="buttons">
+                <button type="button" onclick="submitForm()" class="btn">Save</button>
+              </div>
+            </div>
+          </div>
+        </div>
+    </div>
+  </div>
+</div>
+
+<script>
+
+  var url = window.location.href;
+
+  // Use the URL API to parse the URL
+  var urlObj = new URL(url);
+
+  // Get the last part of the URL path, which should be the product_id
+  var product_id = urlObj.pathname.split('/').pop();
+
+  // Now you can use product_id in your JavaScript code
+  console.log(product_id);
+
+  async function submitForm() {
+    const form = document.getElementById('productForm');
+    let formData = new FormData(form);
+    let imageFile = formData.get('image');
+    let reader = new FileReader();
+    reader.readAsDataURL(imageFile);
+    reader.onloadend = function () {
+      let base64data = reader.result;
+      let product = {
+        id: product_id,
+        name: formData.get('name'),
+        weight: formData.get('weight'),
+        description: formData.get('description'),
+        image: base64data,
+        stock: formData.get('stock'),
+        price: formData.get('price'),
+        category: formData.get('category')
+      };
+
+      fetch('http://localhost:8000/product/update_product', {
+        method: 'PUT',
+        credentials: 'include',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(product)
+      })
+        .then(response => {
+          if (!response.ok) {
+            throw new Error('Network response was not ok');
+          }
+          return response.json();
+        })
+        .then(result => {
+          console.log(product.id, 1, result);
+          console.log(result.success == true)
+          if (result.success == true) {
+            document.getElementById('serverSuccess').textContent = 'Успех';
+            document.getElementById('serverSuccess').style.display = 'block';
+            document.getElementById('serverError').style.display = 'none';
+          }
+          else {
+            document.getElementById('serverSuccess').style.display = 'none';
+            document.getElementById('serverError').textContent = result.details;
+            document.getElementById('serverError').style.display = 'block';
+          }
+        })
+        .catch(error => {
+          console.error('There has been a problem with your fetch operation:', error);
+          document.getElementById('serverError').textContent = error;
+          document.getElementById('serverError').style.display = 'block';
+        });
+    }
+  }
+
+</script>
+
+{% endblock %}

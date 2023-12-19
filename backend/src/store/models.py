@@ -1,56 +1,66 @@
 from datetime import datetime
-from sqlalchemy import CheckConstraint, Float, LargeBinary, Table, Column, Integer, String, TIMESTAMP, ForeignKey, MetaData, Text
-from sqlalchemy import MetaData
+from sqlalchemy import TIMESTAMP, Column, Integer, String, Float, LargeBinary, Text, ForeignKey, CheckConstraint
+from sqlalchemy.orm import relationship
+from sqlalchemy.ext.declarative import declarative_base
+from auth.models import User
+from database import Base
+from sqlalchemy import Enum
+import enum
+from sqlalchemy.orm import validates
 
-from auth.models import user
+class OrderStatus(enum.Enum):
+    OPENED = "OPENED"
+    CLOSED = "CLOSED"
+    CANCELED = "CANCELED"
 
-metadata = MetaData()
 
-category = Table(
-    "category",
-    metadata,
-    Column("id", Integer, primary_key=True),
-    Column("name", String(50), nullable=False, unique=True, index=True),
-    Column("image", LargeBinary, nullable=False),
-    CheckConstraint('length(name)>0', name="category_name_gt_0")
-)
+class Category(Base):
+    __tablename__ = "category"
 
-product = Table(
-    "product",
-    metadata,
-    Column("id", Integer, primary_key=True),
-    Column("name", String(50), unique=True, nullable=False),
-    Column("weight", Float, CheckConstraint('weight>=0', name="product_weight_ge_0")),
-    Column("description", Text, nullable=True),
-    Column("image", LargeBinary),
-    Column("stock", Integer, CheckConstraint('stock>=0', name="product_stock_ge_0"), nullable=False),
-    Column("price", Float, CheckConstraint('price>0', name="product_price_gt_0"), nullable=False),
-    Column("category_id", Integer, ForeignKey('category.id'))
-)
+    id = Column(Integer, primary_key=True)
+    name = Column(String(50), nullable=False, unique=True, index=True)
+    products = relationship("Product", back_populates="category")
+    def __repr__(self):
+        return self.name
+    __table_args__ = (CheckConstraint('length(name)>0', name="category_name_gt_0"),)
 
-order = Table(
-    "order",
-    metadata,
-    Column("id", Integer, primary_key=True),
-    Column("status", String, default="OPENED"),
-    Column("amount", Integer, CheckConstraint('amount>0', name="order_amount_gt_0"), nullable=False),
-    Column("created_at", TIMESTAMP, default=datetime.utcnow()),
-    Column("user_id", Integer, ForeignKey(user.c.id))
-)
+class Product(Base):
+    __tablename__ = "product"
 
-comment = Table(
-    "comment",
-    metadata,
-    Column("id", Integer, primary_key=True),
-    Column("text", Text, nullable=False),
-    Column("user_id", Integer, ForeignKey(user.c.id)),
-    Column("product_id", Integer, ForeignKey('product.id'))
-)
+    id = Column(Integer, primary_key=True)
+    name = Column(String(50), unique=True, nullable=False)
+    weight = Column(Float, CheckConstraint('weight>=0', name="product_weight_ge_0"))
+    description = Column(Text, nullable=True)
+    image = Column(LargeBinary)
+    stock = Column(Integer, CheckConstraint('stock>=0', name="product_stock_ge_0"), nullable=False)
+    price = Column(Float, CheckConstraint('price>0', name="product_price_gt_0"), nullable=False)
+    category_id = Column(Integer, ForeignKey('category.id'))
+    category = relationship("Category", back_populates="products")
+    def __repr__(self):
+        return self.name
 
-order_detail = Table(
-    "order_detail",
-    metadata,
-    Column("id", Integer, primary_key=True),
-    Column("order_id", Integer, ForeignKey("order.id")),
-    Column("product_id", Integer, ForeignKey("product.id"))
-)
+
+class Order(Base):
+    __tablename__ = "order"
+
+    id = Column(Integer, primary_key=True)
+    status = Column(Enum(OrderStatus))
+    amount = Column(Integer, CheckConstraint('amount>0', name="order_amount_gt_0"), nullable=False)
+    created_at = Column(TIMESTAMP, default=datetime.utcnow())
+    user_id = Column(Integer, ForeignKey(User.id))
+
+class Comment(Base):
+    __tablename__ = "comment"
+
+    id = Column(Integer, primary_key=True)
+    text = Column(Text, nullable=False)
+    user_id = Column(Integer, ForeignKey(User.id))
+    product_id = Column(Integer, ForeignKey('product.id'))
+
+
+class OrderDetail(Base):
+    __tablename__ = "order_detail"
+
+    id = Column(Integer, primary_key=True)
+    order_id = Column(Integer, ForeignKey("order.id"))
+    product_id = Column(Integer, ForeignKey("product.id"))

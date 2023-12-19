@@ -4,7 +4,6 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.exc import SQLAlchemyError, IntegrityError
 
 from database import get_async_session
-from store.models import category, product, order, comment, order_detail
 from store.categories.schemas import CategoryModel
 from auth.base_config import fastapi_users
 from auth.models import User

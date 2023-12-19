@@ -1,0 +1,16 @@
+[tool.poetry]
+name = "fake"
+version = "0.1.0"
+description = ""
+authors = ["Chamster <nikkovkel258@gmail.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.10"
+Faker = "^21.0.0"
+psycopg2 = "^2.9.9"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

@@ -5,10 +5,12 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.exc import SQLAlchemyError, IntegrityError
 
 from database import get_async_session
-from store.models import category, product, order, comment, order_detail
+from store.models import Category, Product, Order, Comment
 from store.orders.schemas import OrderUserDetail, CreateOrderModel
 from auth.base_config import fastapi_users
 from auth.models import User
+import base64
+
 
 router = APIRouter(
     prefix="/order",

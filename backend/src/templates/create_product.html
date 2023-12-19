@@ -1,0 +1,87 @@
+{% extends "details.html" %}
+{% block content %}
+<div class="col-12">
+  <div class="card">
+    <div class="card-header">
+      <h3 class="card-title">New {{ model_view.name }}</h3>
+    </div>
+    <div class="card-body border-bottom py-3">
+      <form id="productForm" onsubmit="event.preventDefault(); submitForm();">
+        <fieldset class="form-fieldset">
+          {% for field in form %}
+          <div class="mb-3 form-group row">
+            {{ field.label(class_="form-label col-sm-2 col-form-label") }}
+            <div class="col-sm-10">
+              {% if field.errors %}
+              {{ field(class_="form-control is-invalid", required=true) }}
+              {% else %}
+              {% if field.name == "image" %}
+              <input name="image" type="file" required>
+              {% else %}
+              {{ field(required=true) }}
+              {% endif %}
+              {% endif %}
+              {% for error in field.errors %}
+              <div class="invalid-feedback">{{ error }}</div>
+              {% endfor %}
+            </div>
+          </div>
+          {% endfor %}
+        </fieldset>
+        <div class="row">
+          <div id="serverError" class="alert alert-danger" role="alert" style="display: none;"></div>
+          <div class="col-md-6">
+            <div class="col">
+              <div class="col-md-2">
+                <a href="{{ url_for('admin:list', identity=model_view.identity) }}" class="btn">
+                  Cancel
+                </a>
+              </div>
+              <div class="btn-group flex-wrap" data-toggle="buttons">
+                <button type="submit" class="btn">Save</button>
+              </div>
+            </div>
+          </div>
+        </div>
+    </div>
+  </div>
+
+  <script>
+    async function submitForm() {
+      const form = document.getElementById('productForm');
+      let formData = new FormData(form);
+      let imageFile = formData.get('image');
+      let reader = new FileReader();
+      reader.readAsDataURL(imageFile);
+      reader.onloadend = function () {
+        let base64data = reader.result;
+        formData.set('image', base64data);
+
+        let blob = new Blob([JSON.stringify(Object.fromEntries(formData.entries()))], { type: 'application/json' });
+
+        fetch('http://localhost:8000/product/add_product', {
+          method: 'POST',
+          credentials: 'include',
+          body: blob
+        })
+          .then(response => {
+            if (!response.ok) {
+              throw new Error('Network response was not ok');
+            }
+            return response.json();
+          })
+          .then(result => {
+            console.log(1, result);
+            document.getElementById('serverError').textContent = result.details;
+            document.getElementById('serverError').style.display = 'block';
+          })
+          .catch(error => {
+            console.error('There has been a problem with your fetch operation:', error);
+            document.getElementById('serverError').textContent = error;
+            document.getElementById('serverError').style.display = 'block';
+          });
+      }
+    } 
+  </script>
+
+  {% endblock %}

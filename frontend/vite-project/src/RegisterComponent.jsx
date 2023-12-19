@@ -32,17 +32,17 @@ const RegisterComponent = () => {
 
   return (
     <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%', overflow: 'auto' }}>
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+      <div style={{ display: 'flex', flexDirection: 'column' }}>
         <input type="text" {...formRegister('username')} placeholder="Username" style={{ padding: '10px' }} />
-        <p>{errors.username?.message}</p>
+        <p style={{ display: 'flex', justifyContent: 'center' }}>{errors.username?.message}</p>
         <input type="email" {...formRegister('email')} placeholder="Email" style={{ padding: '10px' }} />
-        <p>{errors.email?.message}</p>
+        <p style={{ display: 'flex', justifyContent: 'center' }}>{errors.email?.message}</p>
         <input type="password" {...formRegister('password')} placeholder="Password" style={{ padding: '10px' }} />
-        <p>{errors.password?.message}</p>
+        <p style={{ display: 'flex', justifyContent: 'center' }}>{errors.password?.message}</p>
         <input type="password" {...formRegister('confirmPassword')} placeholder="Confirm Password" style={{ padding: '10px' }} />
-        <p>{errors.confirmPassword?.message}</p>
+        <p style={{ display: 'flex', justifyContent: 'center' }}>{errors.confirmPassword?.message}</p>
         <button onClick={handleSubmit(handleRegister)} style={{ padding: '10px', cursor: 'pointer' }}>Register</button>
-        {error && <p>{error}</p>}
+        {error && <p style={{ display: 'flex', justifyContent: 'center' }}>{error}</p>}
       </div>
     </div>
   );
