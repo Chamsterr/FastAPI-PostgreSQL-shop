@@ -70,8 +70,8 @@ const ProductList = () => {
                 <div style={{ display: 'flex', justifyContent: 'center' }}>
                     <TextField label="Поиск" value={searchTerm} onChange={handleSearchChange} style={{ backgroundColor: 'white', width: '50%' }} />
                 </div>
-                <div style={{ display: 'flex', justifyContent: 'center' }}>
-                    <Slider value={priceRange} onChange={handlePriceChange} min={minPrice} max={maxPrice} marks={marks} style={{ width: '50%' }} />
+                <div style={{ display: 'flex', justifyContent: 'center', margin: "35px 0 0 0" }}>
+                    <Slider valueLabelDisplay="on" value={priceRange} onChange={handlePriceChange} min={minPrice} max={maxPrice} marks={marks} style={{ width: '50%' }} />
                 </div>
                 <br/>
             </div>
@@ -107,15 +107,15 @@ const ProductList = () => {
                   onChange={handlePageChange}
                   sx={{
                     '& .MuiPaginationItem-root': {
-                      color: 'white', // Цвет текста
-                      backgroundColor: '#1976d2', // Цвет фона
+                      color: 'white',
+                      backgroundColor: '#1976d2',
                     },
                     '& .Mui-selected': {
-                      color: 'white', // Цвет текста выбранной страницы
-                      backgroundColor: '#0d47a1', // Цвет фона выбранной страницы
+                      color: 'white',
+                      backgroundColor: '#0d47a1',
                     },
                     '& .MuiPaginationItem-ellipsis': {
-                      color: 'white', // Цвет текста многоточия
+                      color: 'white',
                     },
                   }}
                 />
@@ -123,5 +123,4 @@ const ProductList = () => {
         </div>
     );
 };
-
 export default ProductList;

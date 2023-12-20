@@ -22,9 +22,11 @@ admin = Admin(app, engin)
 class UserAdmin(ModelView, model=User):
     column_list = [User.id, User.username]
     can_export = False
+    column_searchable_list = [User.username]
 
 class CategoryAdmin(ModelView, model=Category):
     column_list = [Category.id, Category.name, Category.products]
+    column_searchable_list = [Category.name]
     can_export = False
 
 class ProductAdmin(ModelView, model=Product):
@@ -32,6 +34,7 @@ class ProductAdmin(ModelView, model=Product):
     create_template = "create_product.html"
     edit_template = "edit_image_product.html"
     can_export = False
+    column_searchable_list = [Product.name]
 
 class CommentAdmin(ModelView, model=Comment):
     can_export = False

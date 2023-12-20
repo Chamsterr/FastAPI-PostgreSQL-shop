@@ -23,12 +23,17 @@ const RegisterComponent = () => {
 
   const handleRegister = async (data) => {
     try {
+      console.log('Before register');
       await register(data.username, data.email, data.password);
+      console.log(5);
       navigate('/profile');
     } catch (err) {
+      navigate('/profile');
+      console.log('Error:', err);
       setError(err.message);
     }
   };
+
 
   return (
     <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%', overflow: 'auto' }}>
