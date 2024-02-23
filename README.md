@@ -5,7 +5,7 @@
 
 ## Используемые технологии
 
-- Backend: FastAPI, SQLAlchemyAdmin
+- Backend: FastAPI, FastAPIUsers, SQLAlchemyAdmin
 - Frontend: React
 - Database: PostgreSQL
 
